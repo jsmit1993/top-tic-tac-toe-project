@@ -7,14 +7,6 @@ function createPlayer(name, symbolChoice) {
 // const player1 = createPlayer('name', 'X');
 // const player2 = createPlayer('name', 'O');
 
-//need to put this is in a module instead of iife here.
-const firstPlayer = (() => {
-    if(player1.symbol === 'X') {
-        return player1;
-    } else {
-        return player2;
-    }
-})();
 
 
 function gameBoard() {
@@ -28,5 +20,57 @@ function gameBoard() {
             board[i].push(cell());
         }
     }
-    return board;
+
+    const availableCell = [];
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < columns; j++) {
+            if (board[i][j].getValue() === 0) {
+                availableCell.push({row: i, col: j});
+            }
+        }
+    }
+
+    if (!availableCell.length) return null;
+
+    return {board, availableCell};
+}
+
+function cell() {
+    let value = 0;
+
+    const addSymbol = (player) => {
+        value = player;
+    }
+
+    const getSymbol = () => value;
+
+    return {addSymbol, getSymbol};
+}
+
+//here is the module for the game controller
+function gameController(playerOne = "Player 1", playerTwo = "Player 2") {
+    const board = gameBoard();
+    const players = [
+        {
+            name: playerOne,
+            token: 'X'
+        },
+        {
+            name: playerTwo,
+            token: 'O'
+        }
+    ];
+
+    let activePlayer = players[0];
+
+    const switchPlayer = () => {
+        activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    };
+
+    const getActivePlayer = () => activePlayer;
+
+    const printNewRound = () => {
+        board.printBoard();
+        console.log(`${getActivePlayer().name}'s turn`);
+    }
 }
