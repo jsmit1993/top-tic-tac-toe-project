@@ -4,11 +4,6 @@ function createPlayer(name, symbolChoice) {
     return {name, roundsWon, symbol}
 }
 
-// const player1 = createPlayer('name', 'X');
-// const player2 = createPlayer('name', 'O');
-
-
-
 function gameBoard() {
     const rows = 3;
     const columns = 3;
@@ -32,6 +27,75 @@ function gameBoard() {
 
     if (!availableCell.length) return null;
 
-    return {board, availableCell};
+    const printGameBoard = () => {
+        const boardWithCells = board.map((rows) => 
+            rows.map((cell) => cell.getValue())
+        );
+        console.log(boardWithCells);
+    }
+
+    const dropSymbol = (columns, rows, player) => {
+        if (!board[rows] || !board[rows][columns]) {
+            console.log("Invalid Move");
+            return false;
+        }
+
+        if (board[rows][columns].getValue() !== 0) {
+            console.log("Spot taken! Try a different one.");
+            return false;
+        }
+
+        board[rows][columns].addSymbol(player);
+        return true;
+    }
+
+    return {board, dropSymbol, printGameBoard};
 }
 
+function cell() {
+    let value = 0;
+    const addSymbol = (player) => {
+        value = player;
+    };
+
+    const getValue = () => value;
+
+    return {addSymbol, getValue};
+}
+
+function gameController() {
+    const board = gameBoard();
+    const players = [
+        createPlayer('Player 1', 'X'),
+        createPlayer('Player 2', 'O')
+    ];
+
+    let activePlayer = players[0].symbol === 'X' ? players[0] : players[1];
+
+    const switchPlayerTurn = () => {
+        activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    };
+
+    const getActivePlayer = () => activePlayer;
+
+    const printNewRound = () => {
+        board.printGameBoard();
+        console.log(`${getActivePlayer().name}'s turn.`)
+    }
+
+    const playRound = (columns, rows) => {
+        console.log(`Filling column ${columns} and row ${rows} spot with ${getActivePlayer().symbol}`);
+        const moveSuccessful = board.dropSymbol(columns, rows, getActivePlayer().symbol);
+
+        if (moveSuccessful) {
+            switchPlayerTurn();
+            printNewRound();
+        }
+    }
+
+    printNewRound();
+
+    return {playRound, getActivePlayer};
+}
+
+const game = gameController();
