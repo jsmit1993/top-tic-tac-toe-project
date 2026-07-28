@@ -49,7 +49,21 @@ function gameBoard() {
         return true;
     }
 
-    return {board, dropSymbol, printGameBoard};
+    const winCombo = (symbol) => {
+        for (let i = 0; i < 3; i++) {
+            if (board[i].every(cell => cell.getValue() === symbol)) return true;
+            if ([board[0][i], board[1][i], board[2][i]].every(cell => cell.getValue() === symbol)) return true;
+        }
+
+        if (board[0][0].getValue() === symbol && board[1][1].getValue() === symbol && board[2][2].getValue() === symbol) return true;
+        if (board[0][2].getValue() === symbol && board[1][1].getValue() === symbol && board[2][0].getValue() === symbol) return true;
+        return false;
+    }
+
+    const boardFull = () => {
+        return board.every(rows => rows.every(cell => cell.getValue() !== 0))
+    }
+    return {board, dropSymbol, boardFull, winCombo, printGameBoard};
 }
 
 function cell() {
@@ -88,11 +102,20 @@ function gameController() {
         const moveSuccessful = board.dropSymbol(columns, rows, getActivePlayer().symbol);
 
         if (moveSuccessful) {
+            if (board.winCombo(getActivePlayer().symbol)) {
+                board.printGameBoard();
+                console.log(`🎉 ${getActivePlayer().name} wins!`);
+                return;
+            }
+            if (board.boardFull()) {
+                board.printGameBoard();
+                console.log(`🤝 It's a tie!`);
+                return;
+            }
             switchPlayerTurn();
             printNewRound();
-        }
+        }      
     }
-
     printNewRound();
 
     return {playRound, getActivePlayer};
