@@ -158,6 +158,14 @@ function displayGame() {
                 const cellValue = cell.getValue();
                 cellButton.textContent = cellValue === 0 ? '' : cellValue;
 
+                if (cellValue === "X") {
+                    cellButton.style.color = 'Red';
+                }
+
+                if (cellValue === "O") {
+                    cellButton.style.color = 'Blue';
+                }
+
                 if (isGameOver || cellValue !== 0) {
                     cellButton.disabled = true;
                 }
@@ -192,4 +200,6 @@ function displayGame() {
     return {updateDisplay};
 }
 const userInterface = displayGame();
-function gameReset() {};
+function gameReset() {
+    
+};

@@ -1,11 +1,29 @@
+body {
+    background-color: cadetblue;
+}
+
+h1 {
+    font-weight: bolder;
+    font-size: 60px;
+}
+
+.ticTacToeGame{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
 .content {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 10px;
 }
 
 .gameInfo {
     display: flex;
+    flex-wrap: wrap;
+    font-size: 30px;
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -20,3 +38,12 @@
 
 }
 
+.reset {
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.cell {
+    font-size: 30px;
+}
