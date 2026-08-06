@@ -105,12 +105,16 @@ function gameController() {
             if (board.winCombo(getActivePlayer().symbol)) {
                 board.printGameBoard();
                 console.log(`🎉 ${getActivePlayer().name} wins!`);
-                return;
+                const gameWon = `🎉 ${getActivePlayer().name} has won the game! 🎉`;
+                gameWon;
+                return "win";
             }
             if (board.boardFull()) {
                 board.printGameBoard();
                 console.log(`🤝 It's a tie!`);
-                return;
+                const gameTie = `🤝 It's a tie!`;
+                gameTie;
+                return "tie";
             }
             switchPlayerTurn();
             printNewRound();
@@ -118,7 +122,74 @@ function gameController() {
     }
     printNewRound();
 
-    return {playRound, getActivePlayer};
+    return {playRound, getActivePlayer, board};
 }
 
 const game = gameController();
+
+function displayGame() {
+    const gameInfo = document.querySelector('.gameInfo');
+    const gameUI = document.querySelector('.gameBoard');
+
+    const controller = gameController();
+
+    let isGameOver = false;
+    let endMessage = "";
+
+    const updateDisplay = () => {
+        gameUI.innerHTML = '';
+
+        if (isGameOver) {
+            gameInfo.textContent = endMessage;
+        } else {
+            const activePlayer = controller.getActivePlayer();
+            gameInfo.textContent = `${activePlayer.name}'s turn (${activePlayer.symbol})`;
+        }
+        const boardInstance = controller.board.board;
+
+        boardInstance.forEach((row, rowIndex) =>{
+            row.forEach((cell, columnIndex) => {
+                const cellButton = document.createElement('button');
+                cellButton.classList.add('cell');
+
+                cellButton.dataset.row = rowIndex;
+                cellButton.dataset.column = columnIndex;
+
+                const cellValue = cell.getValue();
+                cellButton.textContent = cellValue === 0 ? '' : cellValue;
+
+                if (isGameOver || cellValue !== 0) {
+                    cellButton.disabled = true;
+                }
+
+                gameUI.appendChild(cellButton);
+            })
+        });
+
+        
+    };
+    gameUI.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('cell')) return;
+        if (isGameOver) return; 
+
+        const selectedRow = parseInt(e.target.dataset.row);
+        const selectedColumn = parseInt(e.target.dataset.column);
+
+        const roundLogic = controller.playRound(selectedColumn, selectedRow);
+        
+        if(roundLogic === "win") {
+            isGameOver = true;
+            endMessage = `🎉 ${controller.getActivePlayer().name} has won the game! 🎉`;
+        } else if (roundLogic === "tie") {
+            isGameOver = true;
+            endMessage = `🤝 It's a tie!`;
+        }
+
+        updateDisplay();
+    });
+    updateDisplay();
+
+    return {updateDisplay};
+}
+const userInterface = displayGame();
+function gameReset() {};

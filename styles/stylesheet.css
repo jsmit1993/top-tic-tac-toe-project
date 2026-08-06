@@ -1,0 +1,22 @@
+.content {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.gameInfo {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    padding: auto;
+}
+
+.gameBoard {
+    display: grid;
+    grid-template-columns: 75px 75px 75px;
+    grid-template-rows: 75px 75px 75px;
+    gap: 3px;
+
+}
+
