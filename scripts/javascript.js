@@ -78,7 +78,7 @@ function cell() {
 }
 
 function gameController() {
-    const board = gameBoard();
+    let board = gameBoard();
     const players = [
         createPlayer('Player 1', 'X'),
         createPlayer('Player 2', 'O')
@@ -97,6 +97,10 @@ function gameController() {
         console.log(`${getActivePlayer().name}'s turn.`)
     }
 
+    const resetGameLogic = () => {
+        board = gameBoard();
+        activePlayer = players[0];
+    }
     const playRound = (columns, rows) => {
         console.log(`Filling column ${columns} and row ${rows} spot with ${getActivePlayer().symbol}`);
         const moveSuccessful = board.dropSymbol(columns, rows, getActivePlayer().symbol);
@@ -121,8 +125,8 @@ function gameController() {
         }      
     }
     printNewRound();
-
-    return {playRound, getActivePlayer, board};
+    const getBoard = () => board;
+    return {playRound, getActivePlayer, getBoard, resetGameLogic};
 }
 
 const game = gameController();
@@ -130,6 +134,7 @@ const game = gameController();
 function displayGame() {
     const gameInfo = document.querySelector('.gameInfo');
     const gameUI = document.querySelector('.gameBoard');
+    const resetBtn = document.querySelector('.reset');
 
     const controller = gameController();
 
@@ -145,7 +150,7 @@ function displayGame() {
             const activePlayer = controller.getActivePlayer();
             gameInfo.textContent = `${activePlayer.name}'s turn (${activePlayer.symbol})`;
         }
-        const boardInstance = controller.board.board;
+        const boardInstance = controller.getBoard().board;
 
         boardInstance.forEach((row, rowIndex) =>{
             row.forEach((cell, columnIndex) => {
@@ -195,11 +200,16 @@ function displayGame() {
 
         updateDisplay();
     });
+
+    resetBtn.addEventListener('click', () => {
+        controller.resetGameLogic(); 
+        isGameOver = false;          
+        endMessage = "";             
+        updateDisplay();             
+    });
+
     updateDisplay();
 
     return {updateDisplay};
 }
 const userInterface = displayGame();
-function gameReset() {
-    
-};
